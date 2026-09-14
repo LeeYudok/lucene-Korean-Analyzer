@@ -28,8 +28,8 @@ public class SynonymDictionaryIndexTest {
 			searcherManager.maybeRefresh();
 			searcher = searcherManager.acquire();
 
-			assertEquals(1, searcher.search(new TermQuery(new Term("syn", "커버리지동의어")), 10).totalHits.value);
-			assertEquals(1, searcher.search(new TermQuery(new Term("syn", "coverage-synonym")), 10).totalHits.value);
+			assertEquals(1, searcher.search(new TermQuery(new Term("syn", "커버리지동의어")), 10).scoreDocs.length);
+			assertEquals(1, searcher.search(new TermQuery(new Term("syn", "coverage-synonym")), 10).scoreDocs.length);
 		} finally {
 			if(searcher != null) {
 				searcherManager.release(searcher);

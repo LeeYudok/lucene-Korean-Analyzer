@@ -11,6 +11,8 @@ Lucene 메이저 버전 라인별로 모듈을 나누어 관리합니다.
 
 ```text
 korean-analyzer-9.x  — Java 11 / Lucene 9.10.0
+korean-analyzer-10.x — Java 21 / Lucene 10.4.0 (9.x 소스·사전 공유)
+opensearch-analysis-korean — OpenSearch 3.7.0 설치 플러그인
 korean-analyzer-8.x  — Java 8  / Lucene 8.11.4 (Java 8 제약 환경용)
 ```
 
@@ -40,3 +42,7 @@ Analyzer dictionaries and properties live under `korean-analyzer-9.x/src/main/re
 → KoreanStopFilter
 → Lucene TokenStream
 ```
+
+## OpenSearch 배포
+
+[doksam_korean 플러그인 빌드·설치·검색·롤백](opensearch-analysis-korean/README.md).

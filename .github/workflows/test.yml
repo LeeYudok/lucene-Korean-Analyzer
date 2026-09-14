@@ -1,0 +1,37 @@
+name: Analyzer compatibility
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew test :opensearch-analysis-korean:pluginZip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: analysis-korean-opensearch-3.7.0
+          path: opensearch-analysis-korean/target/distributions/*.zip
+      - name: Build integration image
+        run: docker build -t korean-analysis-test -f deploy/Containerfile opensearch-analysis-korean/target/distributions
+      - name: Start isolated OpenSearch
+        run: |
+          docker run -d --name korean-analysis-test -p 127.0.0.1:19227:9200 \
+            -e discovery.type=single-node -e DISABLE_SECURITY_PLUGIN=true \
+            -e DISABLE_INSTALL_DEMO_CONFIG=true -e 'OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m' korean-analysis-test
+          for attempt in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:19227/_cluster/health; then exit 0; fi
+            sleep 2
+          done
+          docker logs korean-analysis-test
+          exit 1
+      - run: python3 scripts/test-opensearch.py
+      - name: Container logs
+        if: failure()
+        run: docker logs korean-analysis-test || true
+      - name: Cleanup
+        if: always()
+        run: docker rm -f korean-analysis-test || true
