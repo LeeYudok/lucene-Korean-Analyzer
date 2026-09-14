@@ -1,0 +1,21 @@
+group = 'com.tistory.devyongsik'
+version = '1.0.0'
+java { sourceCompatibility = JavaVersion.VERSION_21; targetCompatibility = JavaVersion.VERSION_21 }
+dependencies {
+    compileOnly 'org.opensearch:opensearch:3.7.0'
+    implementation(project(':korean-analyzer-10.x')) {
+        exclude group: 'org.apache.lucene'
+    }
+    compileOnly 'org.apache.lucene:lucene-core:10.4.0'
+}
+tasks.register('pluginZip', Zip) {
+    dependsOn tasks.jar, project(':korean-analyzer-10.x').tasks.jar
+    archiveFileName = "analysis-korean-${version}-opensearch-3.7.0.zip"
+    destinationDirectory = layout.buildDirectory.dir('distributions')
+    from tasks.jar
+    from configurations.runtimeClasspath
+    from 'src/main/plugin-metadata'
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}
+tasks.assemble.dependsOn tasks.pluginZip

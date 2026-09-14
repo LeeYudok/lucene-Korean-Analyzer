@@ -33,7 +33,7 @@ public class KoreanSynonymEngine implements Engine {
 		DictionaryFactory dictionaryFactory = DictionaryFactory.getFactory();
 		createSynonymIndex(dictionaryFactory.getSynonymList());
 	}
-	
+
 	private static void createSynonymIndex(List<String> synonyms) {
 
 		SynonymDictionaryIndex indexingModule = SynonymDictionaryIndex.getIndexingModule();
@@ -51,12 +51,12 @@ public class KoreanSynonymEngine implements Engine {
 		if(logger.isDebugEnabled()) {
 			logger.debug("query : {}", query);
 		}
-		
+
 		SynonymDictionaryIndex indexingModule = SynonymDictionaryIndex.getIndexingModule();
 		SearcherManager searcherManager = indexingModule.getSearcherManager();
 		searcherManager.maybeRefresh();
 		IndexSearcher indexSearcher = searcherManager.acquire();
-		
+
 		TopDocs topDocs = indexSearcher.search(query, 25);
 		ScoreDoc[] hits = topDocs.scoreDocs;
 
@@ -67,7 +67,7 @@ public class KoreanSynonymEngine implements Engine {
 		}
 
 		for(int i = 0; i < hits.length; i++) {
-			Document doc = indexSearcher.doc(hits[i].doc);
+			Document doc = indexSearcher.storedFields().document(hits[i].doc);
 
 			String[] values = doc.getValues("syn");
 
@@ -80,10 +80,10 @@ public class KoreanSynonymEngine implements Engine {
 				}
 			}
 		}
-		
+
 		searcherManager.release(indexSearcher);
 		indexSearcher = null;
-		
+
 		return synWordList;
 	}
 
@@ -128,12 +128,12 @@ public class KoreanSynonymEngine implements Engine {
 			positionAttr.setPositionIncrement(0);  //동의어이기 때문에 위치정보 변하지 않음
 			TypeAttribute typeAtt = attributeSource.getAttribute(TypeAttribute.class); //원본 AttributeSource의 Attribute를 받아옴
 			//타입을 synonym으로 설정한다. 나중에 명사추출 시 동의어 타입은 건너뛰기 위함
-			typeAtt.setType("synonym"); 
+			typeAtt.setType("synonym");
 
 			ComparableState comparableState = new ComparableState();
 			comparableState.setState(attributeSource.captureState());
 			comparableState.setStartOffset(offSetAttr.startOffset());
-			
+
 			comparableStateList.add(comparableState);
 		}
 		return;

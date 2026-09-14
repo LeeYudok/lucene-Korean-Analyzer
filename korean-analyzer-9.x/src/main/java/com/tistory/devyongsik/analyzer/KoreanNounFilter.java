@@ -67,4 +67,11 @@ public class KoreanNounFilter extends TokenFilter {
 		return true;
 	}
 
+    @Override
+    public void reset() throws IOException {
+        super.reset();
+        comparableStateList.clear();
+        returnedTokens.clear();
+    }
+
 }
