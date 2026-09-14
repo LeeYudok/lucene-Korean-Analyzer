@@ -1,5 +1,5 @@
 FROM docker.io/opensearchproject/opensearch:3.7.0
-COPY analysis-korean-1.0.0-opensearch-3.7.0.zip /tmp/analysis-korean.zip
+COPY --chown=1000:1000 analysis-korean-1.0.0-opensearch-3.7.0.zip /tmp/analysis-korean.zip
 RUN /usr/share/opensearch/bin/opensearch-plugin install --batch analysis-nori \
     && /usr/share/opensearch/bin/opensearch-plugin install --batch file:///tmp/analysis-korean.zip \
     && rm /tmp/analysis-korean.zip
